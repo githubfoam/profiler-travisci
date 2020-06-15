@@ -128,7 +128,7 @@ matrix:
           RUN chmod a+x /bootstrap.sh
           USER myuser
           ENTRYPOINT ["/bootstrap.sh"]
-          EOF         
+          EOF
         - sudo docker image ls
         # - 'sudo docker build -t xenial:nc .'
         # - sudo docker image ls
