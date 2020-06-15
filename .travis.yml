@@ -136,6 +136,8 @@ matrix:
         - sudo docker run -ti --rm -p 9192:9192/udp xenial/nc -vvul -p 9192 &
         # send traces to an UDP port, sending traces to the netcat docker container
         - ping 8.8.8.8 | nc -vu 0.0.0.0 9191 >/dev/null
+        - sudo docker run -ti --rm -p 9192:9192/udp xenial/nc -n -v -l -p 8182 -e /bin/bash &
+        - nc -nv 127.0.0.1 8182
 
       after_success:
         - deactivate
