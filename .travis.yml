@@ -106,7 +106,7 @@ matrix:
       <<: *fleet_script_tasks
       script:
         - |
-          cat <<EOF > print.sh
+          cat <<EOF > bootstrap.sh
           #!/bin/bash
           set -e
           if ! type -- "$1" &> /dev/null; then # Prepend "netcat" if the first argument is not an executable
@@ -119,10 +119,10 @@ matrix:
           docker build -t myimage:latest -<<EOF
           FROM ubuntu:xenial
           RUN groupadd -r myuser && useradd -r -g myuser myuser
-          RUN set -eux -o pipefail && \
+          RUN set -eux && \
               apt-get update && apt-get install -qqy --no-install-recommends netcat
           USER myuser
-          ENTRYPOINT ["/bin/bash"]
+          ENTRYPOINT ["/bootstrap.sh"]
           EOF
         - sudo docker image ls
       after_success:
