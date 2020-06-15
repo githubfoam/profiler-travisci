@@ -140,7 +140,8 @@ matrix:
         # - echo "hola container" | timeout 5s nc -vu 127.0.0.1 9191
         # - echo "hola container" | timeout -s SIGKILL 7 nc -vu 127.0.0.1 9191
         # - echo "hola container" | timeout --preserve-status 7s nc -vu 127.0.0.1 9191
-        - echo "hola container" | timeout -k 7s 5s nc -vu 127.0.0.1 9191
+        # - echo "hola container" | timeout -k 7s 5s nc -vu 127.0.0.1 9191
+        - echo $(echo "hola container" | timeout -k 7s 5s nc -vu 127.0.0.1 9191)
         # - echo "hola container" | nc -vu -w 5 127.0.0.1 9191
         # - sudo docker run -ti --rm -p 9192:9192/udp xenial/nc -n -v -l -p 8182 -e /bin/bash &
         # - nc -nv -w 5 127.0.0.1 8182 && uname -a
