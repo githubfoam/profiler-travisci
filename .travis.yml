@@ -83,10 +83,51 @@ matrix:
         - source ~venvpy3/bin/activate
       <<: *fleet_install_tasks
       <<: *fleet_script_tasks
-      # <<: *fleet_script_gnufortran_tasks
       <<: *fleet_script_gnufortran_openmp_tasks
       after_success:
         - deactivate
+
+    - name: "dockerize netcat Python 3.7 on bionic amd64"
+      os: linux
+      dist: bionic
+      arch: amd64
+      language: python
+      python: 3.7
+      env:
+        - OMP_NUM_THREADS=4 #https://docs.travis-ci.com/user/languages/c/#openmp-projects
+      compiler:
+       - gcc
+       - clang
+      before_install:
+        - pip3 install virtualenv
+        - virtualenv -p $(which python3) ~venvpy3
+        - source ~venvpy3/bin/activate
+      <<: *fleet_install_tasks
+      <<: *fleet_script_tasks
+      script:
+        - |
+          cat <<EOF > print.sh
+          #!/bin/bash
+          set -e
+          if ! type -- "$1" &> /dev/null; then # Prepend "netcat" if the first argument is not an executable
+          	set -- /bin/netcat "$@"
+          fi
+          echo "->>>>>> (Executing '"$@"') <<<<<<-"
+          exec "$@"
+          EOF
+        - |
+          docker build -t myimage:latest -<<EOF
+          FROM ubuntu:xenial
+          RUN groupadd -r myuser && useradd -r -g myuser myuser
+          RUN set -eux -o pipefail && \
+              apt-get update && apt-get install -qqy --no-install-recommends netcat
+          USER myuser
+          ENTRYPOINT ["/bin/bash"]
+          EOF
+        - sudo docker image ls
+      after_success:
+        - deactivate
+
     #
     # - name: "gnu fortran Python 3.7 on bionic arm64"
     #   os: linux
