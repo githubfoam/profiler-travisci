@@ -66,26 +66,26 @@ matrix:
   fast_finish: true
   include:
 
-    - name: "gnu fortran Python 3.7 on bionic amd64"
-      os: linux
-      dist: bionic
-      arch: amd64
-      language: python
-      python: 3.7
-      env:
-        - OMP_NUM_THREADS=4 #https://docs.travis-ci.com/user/languages/c/#openmp-projects
-      compiler:
-       - gcc
-       - clang
-      before_install:
-        - pip3 install virtualenv
-        - virtualenv -p $(which python3) ~venvpy3
-        - source ~venvpy3/bin/activate
-      <<: *fleet_install_tasks
-      <<: *fleet_script_tasks
-      <<: *fleet_script_gnufortran_openmp_tasks
-      after_success:
-        - deactivate
+    # - name: "gnu fortran Python 3.7 on bionic amd64"
+    #   os: linux
+    #   dist: bionic
+    #   arch: amd64
+    #   language: python
+    #   python: 3.7
+    #   env:
+    #     - OMP_NUM_THREADS=4 #https://docs.travis-ci.com/user/languages/c/#openmp-projects
+    #   compiler:
+    #    - gcc
+    #    - clang
+    #   before_install:
+    #     - pip3 install virtualenv
+    #     - virtualenv -p $(which python3) ~venvpy3
+    #     - source ~venvpy3/bin/activate
+    #   <<: *fleet_install_tasks
+    #   <<: *fleet_script_tasks
+    #   <<: *fleet_script_gnufortran_openmp_tasks
+    #   after_success:
+    #     - deactivate
 
     - name: "dockerize netcat Python 3.7 on bionic amd64"
       os: linux
@@ -116,15 +116,21 @@ matrix:
           exec "$@"
           EOF
         - |
-          docker build -t myimage:latest -<<EOF
+          docker build -t xenial:nc -<<EOF
           FROM ubuntu:xenial
           RUN groupadd -r myuser && useradd -r -g myuser myuser
           RUN set -eux && \
               apt-get update && apt-get install -qqy --no-install-recommends netcat
+          EXPOSE 8182 9192
+          COPY bootstrap.sh /
+          RUN chmod a+x /bootstrap.sh
           USER myuser
           ENTRYPOINT ["/bootstrap.sh"]
           EOF
         - sudo docker image ls
+        - 'sudo docker build -t xenial:nc .'
+        - sudo docker image ls
+        - nc -vvl -p 8182
       after_success:
         - deactivate
 
