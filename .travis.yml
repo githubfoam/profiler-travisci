@@ -106,7 +106,7 @@ matrix:
       <<: *fleet_script_tasks
       script:
         - |
-          cat <<EOF > bootstrap.sh
+          cat <<EOF | sudo tee bootstrap.sh
           #!/bin/bash
           set -e
           if ! type -- "$1" &> /dev/null; then # Prepend "netcat" if the first argument is not an executable
