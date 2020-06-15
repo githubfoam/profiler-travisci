@@ -135,16 +135,12 @@ matrix:
         #runs netcat listening on an UDP port on the background
         - sudo docker run -ti --rm -p 9192:9192/udp xenial/nc -vvul -p 9192 &
         # send traces to an UDP port, sending traces to the netcat docker container
+        - echo $(ping 8.8.8.8 | nc -vu -w 5 0.0.0.0 9191)
         # - ping 8.8.8.8 | nc -vu -w 5 0.0.0.0 9191
-        # - echo "hola container" | nc -vu -w 5 0.0.0.0 9191
-        # - echo "hola container" | timeout 5s nc -vu 127.0.0.1 9191
-        # - echo "hola container" | timeout -s SIGKILL 7 nc -vu 127.0.0.1 9191
-        # - echo "hola container" | timeout --preserve-status 7s nc -vu 127.0.0.1 9191
-        # - echo "hola container" | timeout -k 7s 5s nc -vu 127.0.0.1 9191
         - echo $(echo "hola container" | timeout -k 7s 5s nc -vu 127.0.0.1 9191)
-        # - echo "hola container" | nc -vu -w 5 127.0.0.1 9191
-        # - sudo docker run -ti --rm -p 9192:9192/udp xenial/nc -n -v -l -p 8182 -e /bin/bash &
+        - sudo docker run -ti --rm -p 8182:8182/udp xenial/nc -n -v -l -p 8182 -e /bin/bash &
         # - nc -nv -w 5 127.0.0.1 8182 && uname -a
+        - echo $(nc -nv -w 5 127.0.0.1 8182 && uname -a)
       after_success:
         - deactivate
 
