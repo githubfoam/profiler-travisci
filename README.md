@@ -2,7 +2,7 @@
 profiler valgrind gprof strace ltrace gperftools gnu fortran c++ python openmp makefile cmake
 
 Travis (.com) dev branch:
-[![Build Status](https://travis-ci.com/githubfoam/profiler-travisci.svg?branch=dev)](https://travis-ci.com/githubfoam/profilers-travisci)  
+[![Build Status](https://travis-ci.com/githubfoam/profiler-travisci.svg?branch=master)](https://travis-ci.com/githubfoam/profilers-travisci)  
 # ppc64le
 ~~~~
 Flat profile:
