@@ -1,0 +1,156 @@
+---
+sudo: required
+dist: bionic
+env:
+  global:
+  # auto vagrant installation
+# notifications:
+#   slack:
+#     on_failure: always
+
+fleet_script_gnufortran_tasks : &fleet_script_gnufortran_tasks
+      script:
+        - sudo apt-get install -qqy gfortran # GNU Fortran profiler
+        - sudo apt-get install -qqy valgrind kcachegrind # valgrind profiler
+        - sudo apt-get install -qqy google-perftools libgoogle-perftools4 # Gperftools profiler
+        - gfortran --version
+        - echo "=========================================="
+        - echo "=========================================="
+        - pushd $(pwd)
+        - cd lab2
+        - make
+        - popd
+        - echo "=========================================="
+        - echo "=========================================="
+
+fleet_script_gnufortran_openmp_tasks : &fleet_script_gnufortran_openmp_tasks
+      script:
+        - sudo apt-get install -qqy gfortran # GNU Fortran profiler
+        - sudo apt-get install -qqy valgrind kcachegrind # valgrind profiler
+        - sudo apt-get install -qqy google-perftools libgoogle-perftools4 # Gperftools profiler
+        - gfortran --version
+        - echo "=============WITHOUT OPENMP STARTS============================="
+        - echo "=========================================="
+        - pushd $(pwd)
+        - cd lab2
+        - make
+        - popd
+        - echo "================WITHOUT OPENMP ENDS============================"
+        - echo "=========================================="
+        # - echo "=============OPENMP STARTS============================="
+        # - echo "=========================================="
+        # - pushd $(pwd)
+        # - cd lab3
+        # - make
+        # - popd
+        # - echo "=============OPENMP ENDS============================="
+        # - echo "=========================================="
+        # - echo "=============CPP STARTS============================="
+        # - echo "=========================================="
+        # - pushd $(pwd)
+        # - cd lab4
+        # - make && make clean
+        # - popd
+        # - echo "=============CPP ENDS============================="
+        # - echo "=========================================="
+
+fleet_script_tasks : &fleet_script_tasks
+      script:
+        - python --version
+fleet_install_tasks : &fleet_install_tasks
+      install:
+        - pip install -r requirements.txt
+
+
+matrix:
+  fast_finish: true
+  include:
+
+    - name: "gnu fortran Python 3.7 on bionic amd64"
+      os: linux
+      dist: bionic
+      arch: amd64
+      language: python
+      python: 3.7
+      env:
+        - OMP_NUM_THREADS=4 #https://docs.travis-ci.com/user/languages/c/#openmp-projects
+      compiler:
+       - gcc
+       - clang
+      before_install:
+        - pip3 install virtualenv
+        - virtualenv -p $(which python3) ~venvpy3
+        - source ~venvpy3/bin/activate
+      <<: *fleet_install_tasks
+      <<: *fleet_script_tasks
+      # <<: *fleet_script_gnufortran_tasks
+      <<: *fleet_script_gnufortran_openmp_tasks
+      after_success:
+        - deactivate
+    #
+    # - name: "gnu fortran Python 3.7 on bionic arm64"
+    #   os: linux
+    #   dist: bionic
+    #   arch: arm64
+    #   language: python
+    #   python: 3.7
+    #   env:
+    #     - OMP_NUM_THREADS=4 #https://docs.travis-ci.com/user/languages/c/#openmp-projects
+    #   compiler:
+    #    - gcc
+    #    - clang
+    #   before_install:
+    #     - pip3 install virtualenv
+    #     - virtualenv -p $(which python3) ~venvpy3
+    #     - source ~venvpy3/bin/activate
+    #   <<: *fleet_install_tasks
+    #   <<: *fleet_script_tasks
+    #   # <<: *fleet_script_gnufortran_tasks
+    #   <<: *fleet_script_gnufortran_openmp_tasks
+    #   after_success:
+    #     - deactivate
+    #
+    # - name: "gnu fortran Python 3.7 on bionic ppc64le"
+    #   os: linux
+    #   arch: ppc64le
+    #   dist: bionic
+    #   language: python
+    #   python: 3.7
+    #   env:
+    #     - OMP_NUM_THREADS=4 #https://docs.travis-ci.com/user/languages/c/#openmp-projects
+    #   compiler:
+    #    - gcc
+    #    - clang
+    #   before_install:
+    #     - pip3 install virtualenv
+    #     - virtualenv -p $(which python3) ~venvpy3
+    #     - source ~venvpy3/bin/activate
+    #   <<: *fleet_install_tasks
+    #   <<: *fleet_script_tasks
+    #   # <<: *fleet_script_gnufortran_tasks
+    #   <<: *fleet_script_gnufortran_openmp_tasks
+    #   after_success:
+    #     - deactivate
+    #
+    #
+    # - name: "gnu fortran Python 3.7 on bionic s390x" #Unable to locate package osquery
+    #   os: linux
+    #   arch: s390x
+    #   dist: bionic
+    #   language: python
+    #   python: 3.7
+    #   env:
+    #     - OMP_NUM_THREADS=4 #https://docs.travis-ci.com/user/languages/c/#openmp-projects
+    #   compiler:
+    #    - gcc
+    #    - clang
+    #   before_install:
+    #     - pip3 install virtualenv
+    #     - virtualenv -p $(which python3) ~venvpy3
+    #     - source ~venvpy3/bin/activate
+    #   <<: *fleet_install_tasks
+    #   <<: *fleet_script_tasks
+    #   # <<: *fleet_script_gnufortran_tasks
+    #   <<: *fleet_script_gnufortran_openmp_tasks
+    #   after_success:
+    #     - deactivate
