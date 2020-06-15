@@ -132,8 +132,10 @@ matrix:
         - 'sudo docker build -t xenial:nc .'
         - sudo docker run -d -t --name=netcat-xenial -p 8182:8182 -p 9191:9191/udp xenial:nc
         - sudo docker image ls
-        # - 'sudo docker build -t xenial:nc .'
-        # - sudo docker image ls
+        #runs netcat listening on an UDP port on the background
+        - sudo docker run -ti --rm -p 9192:9192/udp xenial/nc -vvul -p 9192 &
+        # send traces to an UDP port, sending traces to the netcat docker container
+        - ping 8.8.8.8 | nc -vu 0.0.0.0 9191
         # - nc -vvl -p 8182
       after_success:
         - deactivate
