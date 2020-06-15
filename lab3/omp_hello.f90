@@ -1,5 +1,5 @@
 PROGRAM helloWorld
  !$OMP PARALLEL
- PRINT *, "hello, openMP"
+ PRINT *, "hola, openMP"
  !$OMP END PARALLEL
 END PROGRAM helloWorld
