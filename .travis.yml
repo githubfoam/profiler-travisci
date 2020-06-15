@@ -116,6 +116,7 @@ matrix:
           exec "$@"
           EOF
         - cat bootstrap.sh
+        - ls -lai bootstrap.sh
         - |
           docker build -t xenial:nc -<<EOF
           FROM ubuntu:xenial
@@ -127,11 +128,11 @@ matrix:
           RUN chmod a+x /bootstrap.sh
           USER myuser
           ENTRYPOINT ["/bootstrap.sh"]
-          EOF
+          EOF         
         - sudo docker image ls
         # - 'sudo docker build -t xenial:nc .'
         # - sudo docker image ls
-        - nc -vvl -p 8182
+        # - nc -vvl -p 8182
       after_success:
         - deactivate
 
