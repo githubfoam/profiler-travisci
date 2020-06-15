@@ -116,19 +116,19 @@ matrix:
           exec "$@"
           EOF
         - cat bootstrap.sh
-        # - |
-        #   docker build -t xenial:nc -<<EOF
-        #   FROM ubuntu:xenial
-        #   RUN groupadd -r myuser && useradd -r -g myuser myuser
-        #   RUN set -eux && \
-        #       apt-get update && apt-get install -qqy --no-install-recommends netcat
-        #   EXPOSE 8182 9192
-        #   COPY bootstrap.sh /
-        #   RUN chmod a+x /bootstrap.sh
-        #   USER myuser
-        #   ENTRYPOINT ["/bootstrap.sh"]
-        #   EOF
-        # - sudo docker image ls
+        - |
+          docker build -t xenial:nc -<<EOF
+          FROM ubuntu:xenial
+          RUN groupadd -r myuser && useradd -r -g myuser myuser
+          RUN set -eux && \
+              apt-get update && apt-get install -qqy --no-install-recommends netcat
+          EXPOSE 8182 9192
+          COPY bootstrap.sh /
+          RUN chmod a+x /bootstrap.sh
+          USER myuser
+          ENTRYPOINT ["/bootstrap.sh"]
+          EOF
+        - sudo docker image ls
         # - 'sudo docker build -t xenial:nc .'
         # - sudo docker image ls
         - nc -vvl -p 8182
